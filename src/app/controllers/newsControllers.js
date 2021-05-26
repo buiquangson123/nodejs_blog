@@ -1,6 +1,4 @@
-
 class NewsControlller {
-
     //[GET]/news
     index(req, res) {
         res.render('new');
@@ -12,4 +10,4 @@ class NewsControlller {
     }
 }
 
-module.exports = new NewsControlller;
+module.exports = new NewsControlller();
