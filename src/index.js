@@ -5,6 +5,11 @@ const handlebars = require('express-handlebars');
 const app = express();
 const port = 3000;
 
+//cấu hình db
+const db = require('./config/db')
+
+db.connect();
+
 //tự mặc định trỏ đến file có tên index.js
 const route = require('./routes');
 
