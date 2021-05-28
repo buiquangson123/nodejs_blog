@@ -1,7 +1,7 @@
 <div class="mt-4">
     <div>
-      <a href="/me/trash/courses">Thùng rác</a>
-      <h2>Danh sách khóa học</h2>
+      <a href="/me/stored/courses">Trở lại</a>
+      <h2>Danh sách đã xóa</h2>
     </div>
     <table class="table table-hover mt-4">
     <thead>
@@ -13,19 +13,19 @@
         </tr>
     </thead>
     <tbody>
-        {{#each courses}}
+        {{#each coursesNew}}
         <tr>
         <th scope="row">{{sum @index 1}}</th>
         <td>{{this.name}}</td>
         <td>{{this.slug}}</td>
         <td>{{this.des}}</td>
         <td>
-            <a href="/courses/{{this._id}}/edit">Sửa</a>
-            <a href="" data-toggle="modal" data-target="#delete-course-modal" data-id="{{this._id}}">Xóa</a>
+            <a href="" class="btn-restore-course" data-id="{{this._id}}">Khôi phục</a>
+            <a href="" data-toggle="modal" data-target="#delete-course-modal" data-id="{{this._id}}">Xóa vĩnh viễn</a>
         </td>
         </tr>
-         {{else}}
-        <td colspan="5" class="text-center">Danh sách khóa học trống.<a href="/courses/create">Thêm khóa học</a></td>
+        {{else}}
+        <td colspan="5" class="text-center">Thùng rác trống.</td>
         {{/each}}
     </tbody>
     </table>
@@ -43,10 +43,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Bạn có muốn xóa khóa học?</p>
+        <p>Khóa học sẽ không thể khôi phục lại.Bạn có muốn xóa khóa học này?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" id="btn-delete-course" class="btn btn-danger">Xóa bỏ</button>
+        <button type="button" id="btn-delete-course" class="btn btn-danger">Xóa vĩnh viễn</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" data-id="123">Hủy</button>
       </div>
     </div>
@@ -54,13 +54,16 @@
 </div>
 
 <form name="delete-course-form" method="POST" ></form>
+<form name="restore-course-form" method="POST" ></form>
 
 <script>
     //DOMContentLoaded: khi DOM load hết nội dung 
     document.addEventListener('DOMContentLoaded', function() {
         var courseId;
         var btnDeleteCourse = document.getElementById('btn-delete-course');
+        var btnRestoreCourse = $('.btn-restore-course');
         var deleteForm = document.forms['delete-course-form'];
+        var restoreForm = document.forms['restore-course-form'];
 
         //Lắng nghe sự kiện để truyền id lên modal
         $('#delete-course-modal').on('show.bs.modal', function (event) {
@@ -72,9 +75,18 @@
 
         //Click Xóa bỏ => update action của form => submit form
         btnDeleteCourse.onclick = function () {
-            deleteForm.action = '/courses/' + courseId + '?_method=DELETE';
+            deleteForm.action = '/courses/' + courseId + '/force?_method=DELETE';
             deleteForm.submit();
         }
+        btnRestoreCourse.click(function (e) {
+            //Khi load lại không bị mất cái id lấy từ nút Khôi phục
+            e.preventDefault();//bỏ hành vi mặc định của thẻ <a>
+
+            var restoreId = $(this).data('id');
+            restoreForm.action = '/courses/' + restoreId + '/restore?_method=PATCH';
+            restoreForm.submit();
+        }) 
+        
 
     })
 </script>

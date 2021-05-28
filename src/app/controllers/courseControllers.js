@@ -45,10 +45,25 @@ class CourseControllers {
 
     //[DELETE]/courses/id
     delete(req, res, next) {
-        Course.findOneAndDelete({_id: req.params.id})
+        Course.delete({_id: req.params.id})
             .then(() => res.redirect('back'))    //redirect: chuyển hướng , back: quay lại trang vừa nãy
             .catch(next);
     }
+    
+    //[DELETE]/courses/id/force
+    forceDelete(req, res, next) {
+        Course.deleteOne({_id: req.params.id})
+            .then(() => res.redirect('back')) 
+            .catch(next);
+    }
+
+    //[PATCH]/courses/id/restore
+    restoreCourse(req, res, next) {
+        Course.restore({_id: req.params.id})
+            .then(() => res.redirect('back')) 
+            .catch(next);
+    }
+
 
 }
 
