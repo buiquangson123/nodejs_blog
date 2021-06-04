@@ -3,11 +3,14 @@ const Course = require('../models/Course');
 const { mongooseToObject } = require('../../util/mongoose');
 
 class CourseControllers {
-
+    //chi tiết khóa học
     //[GET]/courses/:slug
     show(req, res, next) {
         Course.findOne({slug: req.params.slug}).lean()
-            .then(course => res.render('courses/show', {course}))
+            .then(course => res.render('courses/show', {
+                course,
+                layout: false,
+            }))
             .catch(next);
     }
 
@@ -23,7 +26,7 @@ class CourseControllers {
         formData.image = `https://img.youtube.com/vi/${formData.videoId}/sddefault.jpg`;
         const course = new Course(req.body);
         course.save()
-            .then(() => res.redirect('/'))
+            .then(() => res.redirect('/admin/me/stored/courses'))
             .catch(err => {
 
             });
@@ -39,7 +42,7 @@ class CourseControllers {
     //[PUT]/courses/id
     update(req, res, next) {
         Course.updateOne({_id: req.params.id}, req.body)
-            .then(() => res.redirect('/me/stored/courses'))    //redirect: chuyển hướng
+            .then(() => res.redirect('/admin/me/stored/courses'))    //redirect: chuyển hướng
             .catch(next);
     }
 
@@ -64,6 +67,36 @@ class CourseControllers {
             .catch(next);
     }
 
+    //[POST]/courses/handle-action-form
+    handleActionForm(req, res, next) {
+        switch(req.body.action) {
+            case 'delete': 
+                Course.delete( {_id: {$in: req.body.courseIds} })
+                    .then(() => res.redirect('back'))   
+                    .catch(next);
+                break;
+            default:
+                res.json({message: 'Action is invalid!!!'});
+        }
+    }
+
+    //[POST]/courses/handle-action-form-trash
+    handleActionFormTrash(req, res, next) {
+        switch(req.body.action) {
+            case 'delete': 
+                Course.deleteMany( {_id: {$in: req.body.courseIds} })
+                    .then(() => res.redirect('back'))   
+                    .catch(next);
+                break;
+            case 'patch': 
+                Course.restore( {_id: {$in: req.body.courseIds} })
+                    .then(() => res.redirect('back'))   
+                    .catch(next);
+                break;
+            default:
+                res.json({message: 'Action is invalid!!!'});
+        }
+    }
 
 }
 

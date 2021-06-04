@@ -1,13 +1,28 @@
 const Course = require('../models/Course');
+const Acount = require('../models/Acount');
 
 const { mutipleMongooseToObject } = require('../../util/mongoose');
 
 class MeControllers {
 
+    
     //[GET]/me/stored/courses
     storedCourses(req, res, next) {
-
-        Promise.all([Course.find({}).lean(), Course.findDeleted({}).lean()])
+        // let courseQuery = Course.find({}).lean();
+        // //sort => nhận value: asc, desc, ascending, descending, 1, và -1.
+        
+        // //req.query: tìm thuộc tính trên local
+        // if(req.query.hasOwnProperty('_sort')){
+        //     const isValidType = ['asc', 'desc'].includes(req.query.type);
+        //     courseQuery = courseQuery.sort({
+        //         [req.query.column]: isValidType ? req.query.type : 'desc',
+        //     });
+        // }
+        console.log(Course.query);
+        Promise.all([
+            Course.find({}).lean().sortable(req), 
+            Course.findDeleted({}).lean()
+        ])
             .then(([courses, coursess]) =>{
                 var deleteCountNew = 0;
                 coursess.map(course => {
@@ -43,6 +58,17 @@ class MeControllers {
             }) 
             .catch(next);
     }
+
+    //[GET]/me/stored/acounts
+    storedAcounts(req, res, next) {
+        Acount.find({}).lean()
+            .then( acounts => {
+                res.render('me/stored-acounts', { acounts,})
+            }) 
+            .catch(next);
+    }
+
+    
 }
 
 module.exports = new MeControllers();

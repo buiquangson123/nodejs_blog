@@ -1,0 +1,22 @@
+<div class="mt-4">
+    <h3>Sửa người dùng</h3>
+
+    <form method="POST" action="/admin/acounts/{{acount._id}}?_method=PUT">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" value="{{acount.username}}" id="username" name="username">
+        </div>
+
+        <div class="form-group">
+            <label for="role">Role</label>
+            <input class="form-control" value="{{acount.role}}" id="role" name="role">
+        </div>
+
+        <div class="form-group">
+            <label for="tel">Tel</label>
+            <input type="text" class="form-control" value="{{acount.tel}}" id="tel" name="tel">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+    </form>
+</div>

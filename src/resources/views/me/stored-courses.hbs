@@ -1,35 +1,68 @@
-<div class="mt-4">
+<form class="mt-4" name="container-form" method="post" action="/admin/courses/handle-action-form">
     <div>
-      <a href="/me/trash/courses">Thùng rác {{deleteCountNew}}</a>
+      <a href="/admin/me/trash/courses">Thùng rác {{deleteCountNew}}</a>
       <h2>Danh sách khóa học</h2>
     </div>
+
+    <div class="mt-4 d-flex align-items-center">
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+        <label class="form-check-label" for="checkbox-all">Chọn tất cả</label>
+      </div>
+
+      <select class="form-control form-control-sm checkbox-select-all-options" name="action" required>
+        <option value="">--- Thực hiện ---</option>
+        <option value="delete">Xóa</option>
+      </select>
+
+      <button class="btn btn-primary btn-submit-form-check" disabled>Thực hiện</button>
+
+    </div>
+
     <table class="table table-hover mt-4">
     <thead>
         <tr>
-        <th scope="col">STT</th>
-        <th scope="col">Khóa học</th>
-        <th scope="col">Slug</th>
-        <th scope="col" colspan="2">Mô tả</th>
+        <th scope="col" colspan="2">STT</th>
+        
+        <th scope="col">
+          Khóa học
+          {{!-- //desc: nhỏ đến lớn, asc:lớn đến nhỏ --}}
+          {{{sortable 'name' _sort}}}
+        </th>
+        <th scope="col">
+          Slug
+          {{{sortable 'slug' _sort}}}
+        </th>
+        <th scope="col" colspan="2">
+          Mô tả
+          {{{sortable 'des' _sort}}}
+        </th>
         </tr>
     </thead>
     <tbody>
         {{#each courses}}
         <tr>
+        <td> 
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="courseIds[]" value="{{this._id}}" >
+          </div>
+        </td>
         <th scope="row">{{sum @index 1}}</th>
         <td>{{this.name}}</td>
         <td>{{this.slug}}</td>
         <td>{{this.des}}</td>
         <td>
-            <a href="/courses/{{this._id}}/edit">Sửa</a>
+            <a href="/admin/courses/{{this._id}}/edit">Sửa</a>
             <a href="" data-toggle="modal" data-target="#delete-course-modal" data-id="{{this._id}}">Xóa</a>
         </td>
         </tr>
          {{else}}
-        <td colspan="5" class="text-center">Danh sách khóa học trống.<a href="/courses/create">Thêm khóa học</a></td>
+        <td colspan="5" class="text-center">Danh sách khóa học trống.<a href="/admin/courses/create">Thêm khóa học</a></td>
         {{/each}}
     </tbody>
     </table>
-</div>
+</form>
 
 
 {{!-- modal delete course --}}
@@ -61,6 +94,11 @@
         var courseId;
         var btnDeleteCourse = document.getElementById('btn-delete-course');
         var deleteForm = document.forms['delete-course-form'];
+        //var containerForm = document.forms['container-form'];
+        var containerForm = $('form[name="container-form"]');
+        var checkboxAll = $('#checkbox-all');
+        var courseItem = $('input[name="courseIds[]"]');
+        var checkAllSubmitBtn = $('.btn-submit-form-check');
 
         //Lắng nghe sự kiện để truyền id lên modal
         $('#delete-course-modal').on('show.bs.modal', function (event) {
@@ -72,8 +110,37 @@
 
         //Click Xóa bỏ => update action của form => submit form
         btnDeleteCourse.onclick = function () {
-            deleteForm.action = '/courses/' + courseId + '?_method=DELETE';
+            deleteForm.action = '/admin/courses/' + courseId + '?_method=DELETE';
             deleteForm.submit();
+        }
+
+        checkboxAll.change(function () {
+            var isCheckboxAll = $(this).prop('checked');
+            courseItem.prop('checked', isCheckboxAll);
+            renderCheckAllSubmitBtn();
+        })
+
+        courseItem.change(function () {
+            var isCourseItem = courseItem.length === $('input[name="courseIds[]"]:checked').length;
+            checkboxAll.prop('checked', isCourseItem);
+            renderCheckAllSubmitBtn();
+        })
+
+        //Một ví dụ về lắng nghe hành động submit của form
+        //containerForm.on('submit', function (e) {
+         //   var isSubmitTable = !checkAllSubmitBtn.hasClass('disabled'); //không có class
+         //   if(!isSubmitTable){ //nếu có class disables 
+         //     e.preventDefault(); //=> bỏ hành vi submit mặc định
+         //   }
+       // })
+        
+        function renderCheckAllSubmitBtn() {
+            var countsCheck = $('input[name="courseIds[]"]:checked').length;
+            if(countsCheck){// countsCheck > 0
+              checkAllSubmitBtn.attr('disabled', false); //jquery => bỏ disabled 
+            }else{
+              checkAllSubmitBtn.attr('disabled', true);
+            }
         }
 
     })

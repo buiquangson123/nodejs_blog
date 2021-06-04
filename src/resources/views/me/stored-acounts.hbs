@@ -1,0 +1,147 @@
+<form class="mt-4" name="container-form" method="post" action="/admin/acounts/handle-action-form">
+    <div>
+      {{!-- <a href="/admin/me/trash/acounts">Thùng rác</a> --}}
+      <h2>Danh sách người dùng</h2>
+    </div>
+
+    <div class="mt-4 d-flex align-items-center">
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+        <label class="form-check-label" for="checkbox-all">Chọn tất cả</label>
+      </div>
+
+      <select class="form-control form-control-sm checkbox-select-all-options" name="action" required>
+        <option value="">--- Thực hiện ---</option>
+        <option value="delete">Xóa</option>
+      </select>
+
+      <button class="btn btn-primary btn-submit-form-check" disabled>Thực hiện</button>
+
+    </div>
+
+    <table class="table table-hover mt-4">
+    <thead>
+        <tr>
+        <th scope="col" colspan="2">STT</th>
+        
+        <th scope="col">
+            Username
+        </th>
+        <th scope="col">
+            Password
+        </th>
+        <th scope="col">
+            Role
+        </th>
+        <th scope="col" colspan="2">
+            Telephone
+        </th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each acounts}}
+        <tr>
+        <td> 
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="acountIds[]" value="{{this._id}}" >
+          </div>
+        </td>
+        <th scope="row">{{sum @index 1}}</th>
+        <td>{{this.username}}</td>
+        <td>{{this.password}}</td>
+        <td>{{this.role}}</td>
+        <td>{{this.tel}}</td>
+        <td>
+            <a href="/admin/acounts/{{this._id}}/edit">Sửa</a>
+            <a href="" data-toggle="modal" data-target="#delete-acount-modal" data-id="{{this._id}}">Xóa</a>
+        </td>
+        </tr>
+         {{else}}
+        <td colspan="5" class="text-center">Danh sách người dùng trống.<a href="/admin/acounts/create">Thêm người dùng</a></td>
+        {{/each}}
+    </tbody>
+    </table>
+</form>
+
+
+{{!-- modal delete acount --}}
+<div id="delete-acount-modal" class="modal" tabindex="-1" role="dialog">
+  <div  class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa bỏ người dùng</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có muốn xóa người dùng?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-delete-acount" class="btn btn-danger">Xóa bỏ</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-id="123">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form name="delete-acount-form" method="POST" ></form>
+
+<script>
+    //DOMContentLoaded: khi DOM load hết nội dung 
+    document.addEventListener('DOMContentLoaded', function() {
+        var acountId;
+        var btnDeleteAcount = document.getElementById('btn-delete-acount');
+        var deleteForm = document.forms['delete-acount-form'];
+        //var containerForm = document.forms['container-form'];
+        var containerForm = $('form[name="container-form"]');
+        var checkboxAll = $('#checkbox-all');
+        var acountItem = $('input[name="acountIds[]"]');
+        var checkAllSubmitBtn = $('.btn-submit-form-check');
+
+        //Lắng nghe sự kiện để truyền id lên modal
+        $('#delete-acount-modal').on('show.bs.modal', function (event) {
+          //relatedTarget:nhận diện phần tử mà con trỏ chuột rời 
+          //khỏi hoặc đi vào khi sự kiện được kích hoạt.
+            var button = $(event.relatedTarget); 
+            acountId = button.data('id'); 
+        })
+
+        //Click Xóa bỏ => update action của form => submit form
+        btnDeleteAcount.onclick = function () {
+            deleteForm.action = '/admin/acounts/' + acountId + '?_method=DELETE';
+            deleteForm.submit();
+        }
+
+        checkboxAll.change(function () {
+            var isCheckboxAll = $(this).prop('checked');
+            acountItem.prop('checked', isCheckboxAll);
+            renderCheckAllSubmitBtn();
+        })
+
+        acountItem.change(function () {
+            var isacountItem = acountItem.length === $('input[name="acountIds[]"]:checked').length;
+            checkboxAll.prop('checked', isacountItem);
+            renderCheckAllSubmitBtn();
+        })
+
+        //Một ví dụ về lắng nghe hành động submit của form
+        //containerForm.on('submit', function (e) {
+         //   var isSubmitTable = !checkAllSubmitBtn.hasClass('disabled'); //không có class
+         //   if(!isSubmitTable){ //nếu có class disables 
+         //     e.preventDefault(); //=> bỏ hành vi submit mặc định
+         //   }
+       // })
+        
+        function renderCheckAllSubmitBtn() {
+            var countsCheck = $('input[name="acountIds[]"]:checked').length;
+            if(countsCheck){// countsCheck > 0
+              checkAllSubmitBtn.attr('disabled', false); //jquery => bỏ disabled 
+            }else{
+              checkAllSubmitBtn.attr('disabled', true);
+            }
+        }
+
+    })
+</script>
