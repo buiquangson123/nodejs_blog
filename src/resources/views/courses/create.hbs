@@ -1,7 +1,7 @@
 <div class="mt-4">
     <h3>Đăng khóa học</h3>
 
-    <form method="post" action="/admin/courses/store">
+    <form method="post" action="/admin/courses/store" enctype="multipart/form-data">
         <div class="form-group">
             <label for="name">Tên khóa học</label>
             <input type="text" class="form-control" id="name" name="name">
@@ -16,7 +16,12 @@
             <label for="videoId">VideoId</label>
             <input type="text" class="form-control" id="videoId" name="videoId">
         </div>
-        
+
+        {{!-- <div class="custom-file mb-3 mt-4">
+            <label class="custom-file-label" for="inputGroupFile03">Tải ảnh</label>
+            <input type="file" class="custom-file-input" id="image" name="image">
+        </div> --}}
+
         <button type="submit" class="btn btn-primary">Thêm khóa học</button>
     </form>
 </div>

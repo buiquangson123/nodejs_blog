@@ -1,7 +1,7 @@
 <div class="mt-4">
     <h3>Thêm người dùng</h3>
 
-    <form method="POST" action="/admin/acounts/store">
+    <form method="POST" action="/admin/acounts/store" enctype="multipart/form-data">
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" class="form-control" id="username" name="username">
@@ -20,6 +20,10 @@
         <div class="form-group">
             <label for="tel">Telephone</label>
             <input type="text" class="form-control" id="tel" name="tel">
+        </div>
+
+        <div class="form-group"></div>
+            <input type="file" class="mt-4 mb-3" id="avatar" name="avatar">
         </div>
         
         <button type="submit" class="btn btn-primary">Thêm người dùng</button>

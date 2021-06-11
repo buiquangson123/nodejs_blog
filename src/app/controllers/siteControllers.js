@@ -1,7 +1,5 @@
 const Course = require('../models/Course');
 const Acount = require('../models/Acount');
- 
-
 const { mutipleMongooseToObject } = require('../../util/mongoose');
 class SiteControllers {
 
@@ -17,32 +15,34 @@ class SiteControllers {
         }
 
     homeClient(req, res, next) {
-        Course.find({}).lean()
-        .then(courses =>{
-            const user = req.username
-            res.cookie("username", user);
-            res.render('home', {
-                courses,
-                layout: false,
-            });
-        })
+        const user = req.session.username;
+        Promise.all([
+            Course.find({}).lean(), 
+            Acount.findOne({username: user}).lean(),
+        ])
+            .then(([courses, acount]) =>{
+                
+                res.render('home', {
+                    courses,
+                    acount,
+                    layout: false,
+                });
+            })
             .catch(next);
         }
 
     homeAdmin(req, res, next) {
-        Course.find({}).lean()
-        .then(courses =>{
-            const user = req.username
-            res.cookie("username", user);
-            res.render('homeAdmin');
-        })
+        const user = req.session.username;
+        Acount.findOne({username: user}).lean()
+            .then(acount => 
+                res.render('admin/homeAdmin', {acount})  
+            )
             .catch(next);
-        }
+    }
+           
 }
 
-    
-    
-    module.exports = new SiteControllers();
+module.exports = new SiteControllers();
     
     
     // course.find({}, function (err, course) {

@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 
 const verifyToken = (req, res, next) => {
     
-    //nếu token là fake => catch()
     try {
         const token = req.cookies.auth;
         if(!token){
@@ -10,11 +9,36 @@ const verifyToken = (req, res, next) => {
         } 
 
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        req.username = decoded.username;
+        req.session.username = decoded.username;
         next();
     } catch (error) {
         return res.json(error)
     }
 }
 
-module.exports = verifyToken;
+const roleAuth = (req, res, next) => {
+    
+    try {
+        const token = req.cookies.auth;
+        if(!token){
+            return next();
+        }
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        
+        const roleURL = req.originalUrl.split('/')[1];
+
+        if(roleURL === 'client' && decoded.role === 'admin'){
+            return res.json({'err': 'Không có quyền truy cập'})
+        }else if(roleURL === 'admin' && decoded.role === 'client'){
+            return res.json({'err': 'Không có quyền truy cập'})
+        }else if(roleURL !== 'client' && roleURL !== 'admin'){
+            return res.redirect(`\/${decoded.role}/home`);
+        }
+            
+        next();
+    } catch (error) {
+        return res.json(error)
+    }
+}
+
+module.exports = {verifyToken, roleAuth};

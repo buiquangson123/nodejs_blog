@@ -12,6 +12,7 @@ const Course = new Schema({
     image: { type: String },
     slug: { type: String, slug:'name', unique: true},
     videoId: { type: String },
+    imageURL: {type: String},
 }, {
     //thời gian tạo và update bản ghi
     timestamps: true,

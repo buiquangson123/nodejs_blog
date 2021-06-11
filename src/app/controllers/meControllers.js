@@ -18,7 +18,7 @@ class MeControllers {
         //         [req.query.column]: isValidType ? req.query.type : 'desc',
         //     });
         // }
-        console.log(Course.query);
+       
         Promise.all([
             Course.find({}).lean().sortable(req), 
             Course.findDeleted({}).lean()

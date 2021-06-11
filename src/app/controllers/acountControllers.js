@@ -17,7 +17,7 @@ class AcountControllers {
             return res.status(400).send({ error: "Lỗi định dạng dữ liệu" });
         }
         const acount = new Acount(req.body);
-
+        acount.avatar = req.file.filename;
         bcrypt.genSalt(10, function(err, salt) {
             bcrypt.hash(req.body.password, salt, function(err, hash) {
                 acount.password = hash;

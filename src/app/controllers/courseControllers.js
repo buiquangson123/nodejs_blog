@@ -1,4 +1,5 @@
 const Course = require('../models/Course');
+const upload = require('../middlewares/uploadMiddleware');
 
 const { mongooseToObject } = require('../../util/mongoose');
 
@@ -21,10 +22,10 @@ class CourseControllers {
 
     //[POST]/courses/store
     store(req, res, next) {
-        //res.json(req.body);
         const formData = req.body;
         formData.image = `https://img.youtube.com/vi/${formData.videoId}/sddefault.jpg`;
         const course = new Course(req.body);
+        //course.imageURL = req.file.filename;
         course.save()
             .then(() => res.redirect('/admin/me/stored/courses'))
             .catch(err => {

@@ -19,18 +19,15 @@ const port = 3000;
 const db = require('./config/db')
 db.connect();
 
-//tự mặc định trỏ đến file có tên index.js
-
-//session
-// app.use(session({
-//     secret: 'ssshhhhh',
-//     saveUninitialized: true,
-//     resave: false, 
-//     cookie: {
-//         secure: false,
-//         maxAge: 30 * 24 * 60 * 60 * 1000 // Set cookie 30 days.
-//     }
-// }));
+app.use(session({
+    secret: 'ssshhhhh',
+    saveUninitialized: true,
+    resave: false, 
+    cookie: {
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000
+    }
+}));
 
 //Tạo đường dẫn tĩnh
 app.use(express.static(path.join(__dirname, 'public')));
@@ -45,14 +42,10 @@ app.engine('hbs', handlebars({
 app.set('view engine', 'hbs');
 
 //Câu hình from data khi submit form
-app.use(
-    express.urlencoded({
-        extended: true,
-    }),
-);
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
-//set đường dẫn đến thư mục views, __dirname:đường dẫn ...src/ => sau khi cấu hình ...src/resources/views
+//đường dẫn đến thư mục views
 app.set('views', path.join(__dirname, 'resources', 'views'));
 
 app.use(morgan('combined'));

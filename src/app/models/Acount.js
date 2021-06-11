@@ -12,6 +12,7 @@ const Acount = new Schema({
     role: { type: String },
     tel: { type: String,},
     email: { type: String },
+    avatar: {type: String},
 }, {
     //thời gian tạo và update bản ghi
     timestamps: true,
