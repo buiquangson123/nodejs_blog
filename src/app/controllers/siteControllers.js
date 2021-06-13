@@ -15,29 +15,18 @@ class SiteControllers {
         }
 
     homeClient(req, res, next) {
-        const user = req.session.username;
-        Promise.all([
-            Course.find({}).lean(), 
-            Acount.findOne({username: user}).lean(),
-        ])
-            .then(([courses, acount]) =>{
-                
+        Course.find({}).lean()
+            .then(courses =>
                 res.render('home', {
                     courses,
-                    acount,
                     layout: false,
-                });
-            })
+                })
+            )
             .catch(next);
         }
 
     homeAdmin(req, res, next) {
-        const user = req.session.username;
-        Acount.findOne({username: user}).lean()
-            .then(acount => 
-                res.render('admin/homeAdmin', {acount})  
-            )
-            .catch(next);
+        res.render('admin/homeAdmin');
     }
            
 }

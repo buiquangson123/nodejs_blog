@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const Acount = require('../models/Acount');
 
 const verifyToken = (req, res, next) => {
     
@@ -10,6 +11,7 @@ const verifyToken = (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         req.session.username = decoded.username;
+        req.session.avatar = decoded.avatar;
         next();
     } catch (error) {
         return res.json(error)
@@ -40,5 +42,6 @@ const roleAuth = (req, res, next) => {
         return res.json(error)
     }
 }
+
 
 module.exports = {verifyToken, roleAuth};

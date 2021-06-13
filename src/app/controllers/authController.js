@@ -25,6 +25,7 @@ class AuthController{
                             _id: acount._id, 
                             username: acount.username,
                             role: acount.role,
+                            avatar: acount.avatar,
                         }, process.env.ACCESS_TOKEN_SECRET);
                         res.cookie('auth', accessToken);
                         if(acount.role === 'admin'){

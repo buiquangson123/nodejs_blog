@@ -29,6 +29,7 @@ app.use(session({
     }
 }));
 
+
 //Tạo đường dẫn tĩnh
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -52,7 +53,12 @@ app.use(morgan('combined'));
 
 app.use(methodOverride('_method'));
 
+app.use(function(req, res, next){
+    res.locals.session = req.session;
+    next();
+});
 route(app);
+
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

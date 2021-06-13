@@ -25,8 +25,8 @@
                         
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src="https://avatar-redirect.appspot.com/google/105004155079656900865?size=400" class="stored-course">
-                            <span id="acount-name"></span>
+                            <img onerror="this.src='/img/default-user.png'" src="" class="stored-course">
+                            <span id="acount-name">{{session.username}}</span>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item btn-logout" href="/logout">Đăng xuất</a>
@@ -76,32 +76,15 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
 
-                function getCookie(cname) {
-                var name = cname + "=";
-                var decodedCookie = decodeURIComponent(document.cookie);
-                var ca = decodedCookie.split(';');
-                for(var i = 0; i <ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) == ' ') {
-                    c = c.substring(1);
-                    }
-                    if (c.indexOf(name) == 0) {
-                    return c.substring(name.length, c.length);
-                    }
-                }
-                return "";
-
-                }
-
-                var token = getCookie('username');
-                $("#acount-name").html(getCookie('username'));
                 const btnLogin = $(".btn-login");
                 const btnLogout = $(".btn-logout");
                 const logoHome = $(".logo-home");
+                 const imageUser = $(".stored-course");
 
                 if($("#acount-name").html().length > 0){
                     btnLogin.css("display", "none");
                     logoHome.attr("href", "/client/home")
+                     imageUser.attr("src", `\/img/{{session.avatar}}`)
                 }else{
                     btnLogout.css("display", "none");
                     logoHome.attr("href", "/home")
